@@ -8,6 +8,7 @@ pygame.display.set_caption("First Game PogChamp!")
 
 WHITE = (255,255,255)
 
+FPS = 60
 
 def draw_window():
     WIN.fill(WHITE)
@@ -15,10 +16,11 @@ def draw_window():
 
 
 def main ():
+    clock = pygame.time.Clock()
 
     run = True
     while run: 
-
+        clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
