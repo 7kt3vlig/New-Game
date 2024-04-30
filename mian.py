@@ -6,6 +6,13 @@ WIDTH, HEIGHT = 1000, 500
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("First Game PogChamp!")
 
+WHITE = (255,255,255)
+
+
+def draw_window():
+    WIN.fill(WHITE)
+    pygame.display.update()
+
 
 def main ():
 
@@ -16,6 +23,9 @@ def main ():
             if event.type == pygame.QUIT:
                 run = False
 
+
+        
+        draw_window()
 
     pygame.quit()
 
