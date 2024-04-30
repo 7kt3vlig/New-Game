@@ -25,10 +25,10 @@ SHARK_2_IMAGE = pygame.image.load(os.path.join("assets", "shark2.png"))
 SHARK_2 = pygame.transform.scale(SHARK_2_IMAGE, (SHARK_WIDTH, SHARK_HEIGHT))
 
 
-
+BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("assets", "background.jpg")), (WIDTH, HEIGHT))
 
 def draw_window(shark1, shark2):
-    WIN.fill(WHITE)
+    WIN.blit(BACKGROUND, (0, 0))
     pygame.draw.rect(WIN, BLACK, BORDER)
     WIN.blit(SHARK_1, (shark1.x, shark1.y))
     WIN.blit(SHARK_2, (shark2.x, shark2.y))
@@ -48,13 +48,13 @@ def shark1_movement(keys_pressed, shark1):
         shark1.y += VELOCITY
 
 def shark2_movement(keys_pressed, shark2):
-    if keys_pressed[pygame.K_LEFT]: #left key 
+    if keys_pressed[pygame.K_LEFT] and shark2.x - VELOCITY > BORDER.x + BORDER.width : #left key 
         shark2.x -= VELOCITY
-    if keys_pressed[pygame.K_RIGHT]: #right key            
+    if keys_pressed[pygame.K_RIGHT] and shark2.x + VELOCITY + shark2.width < WIDTH: #right key            
         shark2.x += VELOCITY
-    if keys_pressed[pygame.K_UP]: #up key 
+    if keys_pressed[pygame.K_UP] and shark2.y - VELOCITY > 0: #up key 
         shark2.y -= VELOCITY
-    if keys_pressed[pygame.K_DOWN]: #down key            
+    if keys_pressed[pygame.K_DOWN] and shark2.y + VELOCITY + shark2.height < HEIGHT: #down key            
         shark2.y += VELOCITY
 
 def main ():
@@ -74,9 +74,8 @@ def main ():
 
         keys_pressed = pygame.key.get_pressed()
         shark1_movement(keys_pressed, shark1)
-            
-        draw_window(shark1, shark2)
         shark2_movement(keys_pressed, shark2)
+        draw_window(shark1, shark2)
 
     pygame.quit()
 
