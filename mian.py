@@ -12,7 +12,7 @@ pygame.display.set_caption("First Game PogChamp!")
 BORDER = pygame.Rect(WIDTH//2 - 10 , 0, 20, HEIGHT)
 
 HEALTH_FONT = pygame.font.SysFont("comicsans", 70)
-
+WINNER_FONT = pygame.font.SysFont("comicsans", 100)
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -97,6 +97,11 @@ def handle_bullets(shark1_bullets, shark2_bullets, shark1, shark2):
         elif bullet.x < 0:
             shark2_bullets.remove(bullet)
 
+def draw_winner(text):
+    draw_text = WINNER_FONT.render(text, 1, BLACK)
+    WIN.blit(draw_text, (WIDTH/2 - draw_text.get_width()/2, HEIGHT/2 - draw_text.get_height()/2))
+    pygame.display.update()
+    pygame.time.delay(5000)
 
 def main ():
     shark1 = pygame.Rect(100, 300, SHARK_WIDTH, SHARK_HEIGHT)
@@ -116,6 +121,8 @@ def main ():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                pygame.quit()
+
             if event.type == pygame.KEYDOWN: 
                 if event.key == pygame.K_LCTRL and len(shark1_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(shark1.x + shark1.width, shark1.y + shark1.height//2 - 2.5, 10, 5)
@@ -140,7 +147,9 @@ def main ():
             winner_text = "Shark 1 wins!"
 
         if winner_text != "":
-            pass #someone won
+            draw_winner(winner_text) 
+            break
+
 
         keys_pressed = pygame.key.get_pressed()
         shark1_movement(keys_pressed, shark1)
@@ -150,8 +159,7 @@ def main ():
         handle_bullets(shark1_bullets, shark2_bullets, shark1, shark2)
 
         draw_window(shark1, shark2, shark1_bullets, shark2_bullets, shark1_health, shark2_health)
-
-    pygame.quit()
+    main()
 
 
 if __name__ == "__main__":
