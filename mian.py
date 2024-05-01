@@ -1,5 +1,6 @@
 import pygame 
 import os 
+pygame.font.init()
 
 
 WIDTH, HEIGHT = 1500, 750
@@ -9,6 +10,9 @@ pygame.display.set_caption("First Game PogChamp!")
 
 
 BORDER = pygame.Rect(WIDTH//2 - 10 , 0, 20, HEIGHT)
+
+HEALTH_FONT = pygame.font.SysFont("comicsans", 70)
+
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -35,9 +39,14 @@ BACKGROUND = pygame.transform.scale(pygame.image.load(os.path.join("assets", "ba
 
 
 
-def draw_window(shark1, shark2, shark1_bullets, shark2_bullets):
+def draw_window(shark1, shark2, shark1_bullets, shark2_bullets, shark1_health, shark2_health):
     WIN.blit(BACKGROUND, (0, 0))
     pygame.draw.rect(WIN, BLACK, BORDER)
+
+    shark1_health_text = HEALTH_FONT.render("Health: " + str(shark1_health), 1, BLACK)
+    shark2_health_text = HEALTH_FONT.render("Health: " + str(shark2_health), 1, BLACK)
+    WIN.blit(shark1_health_text, (WIDTH - shark1_health_text.get_width() - 10, 10))
+    WIN.blit(shark2_health_text, (10, 10))
     WIN.blit(SHARK_1, (shark1.x, shark1.y))
     WIN.blit(SHARK_2, (shark2.x, shark2.y))
 
@@ -77,12 +86,17 @@ def handle_bullets(shark1_bullets, shark2_bullets, shark1, shark2):
         if shark2.colliderect(bullet):
             pygame.event.post(pygame.event.Event(SHARK1_HIT))
             shark1_bullets.remove(bullet)
+        elif bullet.x > WIDTH:
+            shark1_bullets.remove(bullet)
 
     for bullet in shark2_bullets:
         bullet.x -= BULLET_VEL
         if shark1.colliderect(bullet):
             pygame.event.post(pygame.event.Event(SHARK2_HIT))
             shark2_bullets.remove(bullet)
+        elif bullet.x < 0:
+            shark2_bullets.remove(bullet)
+
 
 def main ():
     shark1 = pygame.Rect(100, 300, SHARK_WIDTH, SHARK_HEIGHT)
@@ -90,6 +104,10 @@ def main ():
 
     shark1_bullets = []
     shark2_bullets = []
+
+    shark1_health = 10 
+    shark2_health = 10 
+
     clock = pygame.time.Clock()
 
     run = True
@@ -102,10 +120,27 @@ def main ():
                 if event.key == pygame.K_LCTRL and len(shark1_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(shark1.x + shark1.width, shark1.y + shark1.height//2 - 2.5, 10, 5)
                     shark1_bullets.append(bullet)
+                
 
                 if event.key == pygame.K_RCTRL and len(shark2_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(shark2.x, shark1.y + shark2.height//2 - 2.5, 10, 5)
                     shark2_bullets.append(bullet)
+
+            winner_text = ""
+            if event.type == SHARK1_HIT:
+                shark1_health -= 1
+
+            if event.type == SHARK2_HIT:
+                shark2_health -= 1
+        
+        if shark1_health <= 0:
+            winner_text = "Shark 2 wins!"
+
+        if shark2_health <= 0:
+            winner_text = "Shark 1 wins!"
+
+        if winner_text != "":
+            pass #someone won
 
         keys_pressed = pygame.key.get_pressed()
         shark1_movement(keys_pressed, shark1)
@@ -114,7 +149,7 @@ def main ():
 
         handle_bullets(shark1_bullets, shark2_bullets, shark1, shark2)
 
-        draw_window(shark1, shark2, shark1_bullets, shark2_bullets)
+        draw_window(shark1, shark2, shark1_bullets, shark2_bullets, shark1_health, shark2_health)
 
     pygame.quit()
 
